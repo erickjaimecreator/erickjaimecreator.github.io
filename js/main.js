@@ -301,8 +301,16 @@
   });
 
   // Si se abre con un #ancla, desplazar tras generar el contenido.
+  // Se repite al cargar fuentes e imágenes porque pueden mover la posición.
+  function goToHash() {
+    var id = location.hash.slice(1);
+    var target = id && document.getElementById(decodeURIComponent(id));
+    if (target) target.scrollIntoView({ behavior: "instant", block: "start" });
+  }
   if (location.hash) {
-    var target = document.getElementById(location.hash.slice(1));
-    if (target) target.scrollIntoView();
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    goToHash();
+    window.addEventListener("load", goToHash);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(goToHash);
   }
 })();
